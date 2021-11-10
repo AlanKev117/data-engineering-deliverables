@@ -28,8 +28,12 @@ variable "database_name" {
 }
 
 variable "db_username" {
-  description = "Username credentials for root user"
+  description = "Username credentials for new user"
 }
-variable "db_password" {
-  description = "Password credentials for root user"
+variable "private_network_id" {
+  description = "Private network ID"
+}
+
+variable "address_name" {
+  description = "Name of the google_compute_global_address resource"
 }

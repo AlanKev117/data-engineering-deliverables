@@ -1,21 +1,17 @@
 resource "google_sql_database_instance" "sql_instance" {
-  name              = var.instance_name
+  provider = google-beta
+  
+  name              = "temp-instance-${random_id.db_name_suffix.hex}"
   database_version  = var.database_version
-  region            = var.region
+
+  depends_on = [google_service_networking_connection.private_vpc_connection]
 
   settings {
-    tier      = var.instance_tier
+    tier = var.instance_tier
     disk_size = var.disk_space
-
-    location_preference {
-      zone = var.location
-    }
-
     ip_configuration {
-      authorized_networks {
-        value           = "0.0.0.0/0"
-        name            = "test-cluster"
-      }
+      ipv4_enabled    = true
+      private_network = var.private_network_id
     }
   }
 
@@ -30,5 +26,30 @@ resource "google_sql_database" "database" {
 resource "google_sql_user" "users" {
   name     = var.db_username
   instance = google_sql_database_instance.sql_instance.name
-  password = var.db_password
+  password = random_password.sql_password
+}
+
+# Helpers
+
+resource "random_password" "sql_password" {
+  length           = 16
+  special          = true
+  override_special = "_%@"
+}
+
+resource "random_id" "db_name_suffix" {
+  byte_length = 4
+}
+
+provider "google-beta" {
+  region = var.region
+  zone   = var.location
+}
+
+resource "google_service_networking_connection" "private_vpc_connection" {
+  provider = google-beta
+
+  network                 = var.private_network_id
+  service                 = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = [var.address_name]
 }

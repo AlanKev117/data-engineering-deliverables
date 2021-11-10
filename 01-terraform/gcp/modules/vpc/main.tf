@@ -19,3 +19,19 @@ resource "google_compute_subnetwork" "public_subnets" {
   ip_cidr_range = var.public_subnets[count.index]
   network       = google_compute_network.main-vpc.id
 }
+
+resource "google_compute_global_address" "private_ip_address" {
+  provider = google-beta
+
+  name          = "private-ip-address"
+  purpose       = "VPC_PEERING"
+  address_type  = "INTERNAL"
+  prefix_length = 16
+  network       = google_compute_network.main-vpc.id
+}
+
+
+provider "google-beta" {
+  region = "us-central1"
+  zone   = "us-central1-a"
+}
