@@ -7,10 +7,16 @@ gke_num_nodes = 2
 machine_type  = "n1-standard-1"
 
 #CloudSQL
-instance_name     = "my_instance_name"
-database_version  = "POSTGRES_12"
-instance_tier     = "db-f1-micro"
-disk_space        = 10
-database_name     = "my_favorite_schema"
-db_username       = "my_favorite_user"
-db_password       = "my_strongest_pasword"
+database_version = "POSTGRES_12"
+instance_tier    = "db-f1-micro"
+disk_space       = 10
+database_name    = "dbname"
+db_username      = "myusername"
+
+# Dataproc cluster
+dp_cluster_name = "powerful-cluster-1"
+
+# buckets
+raw_bucket_name = "raw_zone"
+
+staging_bucket_name = "staging_zone"

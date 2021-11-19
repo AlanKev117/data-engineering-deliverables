@@ -1,6 +1,6 @@
 resource "google_sql_database_instance" "sql_instance" {
   provider = google-beta
-  
+  project = var.project_id
   name              = "temp-instance-${random_id.db_name_suffix.hex}"
   database_version  = var.database_version
 
@@ -26,7 +26,7 @@ resource "google_sql_database" "database" {
 resource "google_sql_user" "users" {
   name     = var.db_username
   instance = google_sql_database_instance.sql_instance.name
-  password = random_password.sql_password
+  password = random_password.sql_password.result
 }
 
 # Helpers

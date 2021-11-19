@@ -17,7 +17,7 @@ variable "gke_num_nodes" {
 }
 
 variable "machine_type" {
-  type = string
+  type    = string
   default = "n1-standard-1"
 }
 
@@ -51,7 +51,15 @@ variable "db_username" {
   description = "Username credentials for root user"
   default     = "dbuser"
 }
-variable "db_password" {
-  description = "Password credentials for root user"
-  default     = "dbpassword"
+
+variable "dp_cluster_name" {
+  description = "Name for DP cluster"
+}
+
+variable "raw_bucket_name" {
+  description = "Name for the raw_bucket"
+}
+
+variable "staging_bucket_name" {
+  description = "Name for the staging_bucket"
 }

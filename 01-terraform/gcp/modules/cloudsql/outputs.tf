@@ -22,6 +22,10 @@ output "database" {
   value = google_sql_database.database.id
 }
 
+output "db_name" {
+  value = google_sql_database.database.name
+}
+
 output "db_user_name" {
   value = google_sql_user.users.name
 }
