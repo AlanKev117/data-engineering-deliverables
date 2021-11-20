@@ -1,6 +1,6 @@
-CREATE SCHEMA IF NOT EXISTS second_deliverable;
+CREATE SCHEMA IF NOT EXISTS raw_data;
 
-CREATE TABLE IF NOT EXISTS second_deliverable.user_purchase (
+CREATE TABLE IF NOT EXISTS raw_data.user_purchase (
     invoice_number VARCHAR(10),
     stock_code VARCHAR(20),
     detail VARCHAR(1000),
@@ -11,4 +11,4 @@ CREATE TABLE IF NOT EXISTS second_deliverable.user_purchase (
     country VARCHAR(20)
 );
 
-TRUNCATE TABLE second_deliverable.user_purchase;
+TRUNCATE TABLE raw_data.user_purchase;

@@ -4,7 +4,7 @@ import airflow.utils.dates
 from airflow import DAG
 
 # Operators; we need this to operate!
-from custom_modules.gcs_to_postgres import GCSToPostgresTransfer
+from gcs_to_postgres import GCSToPostgresTransfer
 
 default_args = {
     'owner': 'alan.fuentes',
@@ -17,9 +17,9 @@ dag = DAG('dag_insert_data', default_args=default_args,
 
 process_dag = GCSToPostgresTransfer(
     task_id='dag_gcs_to_postgres',
-    schema='second_deliverable',
+    schema='raw_data',
     table='user_purchase',
-    gcs_bucket='csv_files_de_af',
+    gcs_bucket='raw_bucket_de_af',
     gcs_key='user_purchase.csv',
     gcp_cloudsql_conn_id='google_cloud_sql_default',
     gcp_conn_id='google_cloud_default',
