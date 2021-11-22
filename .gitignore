@@ -41,9 +41,14 @@ kubeconfig*
 
 # airflow connections metadata
 connections.json
+connections.env
 
-# google cloud service credentials (located at assets/ directory)
+# google cloud service keys
 data-engineering-*.json
+*key*.json
+
+# prevent upload of values.yaml due to sensitive connection data
+values.yaml
 
 # python cache
 __pycache__

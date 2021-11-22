@@ -55,9 +55,9 @@ variable "public_subnets" {
   description = "Public Subnets IP addresses"
   type        = list(string)
   default     = [
-    "10.0.8.0/24",
-    "10.0.9.0/24",
-    "10.0.10.0/24",
+    "10.0.4.0/24",
+    "10.0.5.0/24",
+    "10.0.6.0/24",
     # "10.128.11.0/24",
     # "10.128.12.0/24",
     # "10.128.13.0/24",

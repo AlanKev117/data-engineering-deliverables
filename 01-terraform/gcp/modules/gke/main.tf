@@ -11,6 +11,11 @@ resource "google_container_cluster" "primary" {
 
   network    = var.vpc_id
   subnetwork = var.subnet_id
+
+  # Allows GKE cluster to access GCP resources
+  workload_identity_config {
+    workload_pool = "${var.project_id}.svc.id.goog"
+  }
 }
 
 # Separately Managed Node Pool
