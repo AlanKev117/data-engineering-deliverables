@@ -39,7 +39,7 @@ terraform.rc
 # kubeconfigfile
 kubeconfig*
 
-# airflow connections metadata
+# airflow connections sensitive data
 connections.json
 connections.env
 
@@ -47,8 +47,11 @@ connections.env
 data-engineering-*.json
 *key*.json
 
-# prevent upload of values.yaml due to sensitive connection data
-values.yaml
-
 # python cache
 __pycache__
+
+csv/
+
+env/
+
+*.jar

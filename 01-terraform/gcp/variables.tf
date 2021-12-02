@@ -61,5 +61,13 @@ variable "raw_bucket_name" {
 }
 
 variable "staging_bucket_name" {
-  description = "Name for the staging_bucket"
+  description = "Name for the Dataproc cluster's staging bucket"
+}
+
+variable "temp_bucket_name" {
+  description = "Name for the Dataproc cluster's temp bucket"
+}
+
+variable "bq_dataset_id" {
+  description = "BigQuery dataset ID"
 }

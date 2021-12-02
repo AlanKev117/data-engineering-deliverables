@@ -1,0 +1,74 @@
+images:
+  airflow:
+    repository: fugalkev/myairflow
+    tag: 0.0.9
+logs:
+  persistence:
+    # Enable persistent volume for storing logs
+    enabled: true
+    # Volume size for logs
+    size: 1Gi
+    # If using a custom storageClass, pass name here
+    storageClassName: nfs-client
+
+workers:
+  extraVolumeMounts:
+    - name: gcp-key
+      mountPath: /opt/airflow/secrets/gcp-key
+      readOnly: true
+
+  extraVolumes:
+    - name: gcp-key
+      secret:
+        secretName: gcp-key
+
+env:
+  - name: "GOOGLE_APPLICATION_CREDENTIALS"
+    value: "/opt/airflow/secrets/gcp-key/gcp-key.json"
+  - name: "AIRFLOW_CONN_CLOUD_SQL_DEFAULT"
+    valueFrom:
+      secretKeyRef:
+        name: gcp-sql
+        key: uri
+  - name: "CLOUD_SQL_HOST"
+    valueFrom:
+      secretKeyRef:
+        name: gcp-sql
+        key: host
+  - name: "CLOUD_SQL_LOGIN"
+    valueFrom:
+      secretKeyRef:
+        name: gcp-sql
+        key: login
+  - name: "CLOUD_SQL_PW"
+    valueFrom:
+      secretKeyRef:
+        name: gcp-sql
+        key: pw
+  - name: "CLOUD_SQL_PORT"
+    valueFrom:
+      secretKeyRef:
+        name: gcp-sql
+        key: port
+  - name: "CLOUD_SQL_SCHEMA"
+    valueFrom:
+      secretKeyRef:
+        name: gcp-sql
+        key: schema
+  - name: "CLOUD_SQL_LOCATION"
+    valueFrom:
+      secretKeyRef:
+        name: gcp-sql
+        key: type
+  - name: "CLOUD_SQL_INSTANCE"
+    valueFrom:
+      secretKeyRef:
+        name: gcp-sql
+        key: instance
+  - name: "CLOUD_SQL_TYPE"
+    valueFrom:
+      secretKeyRef:
+        name: gcp-sql
+        key: type
+
+      

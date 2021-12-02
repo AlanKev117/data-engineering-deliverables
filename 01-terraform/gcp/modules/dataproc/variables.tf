@@ -14,3 +14,11 @@ variable "dp_cluster_name" {
 variable "subnetwork_name" {
   description = "Name of the subnetwork the cluster will live in"
 }
+
+variable "staging_bucket_name" {
+  description = "Name for the Dataproc cluster's staging bucket"
+}
+
+variable "temp_bucket_name" {
+  description = "Name for the Dataproc cluster's temp bucket"
+}

@@ -12,7 +12,7 @@ default_args = {
     'start_date': airflow.utils.dates.days_ago(1)
 }
 
-dag = DAG('dag_insert_data', default_args=default_args,
+dag = DAG('load_products', default_args=default_args,
           schedule_interval='@daily')
 
 process_dag = GCSToPostgresTransfer(

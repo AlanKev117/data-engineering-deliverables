@@ -1,20 +1,16 @@
-from airflow.providers.google.cloud.hooks.cloud_sql import CloudSQLDatabaseHook
-from airflow.providers.google.cloud.hooks.gcs import GCSHook
-from airflow.models import BaseOperator
-from airflow.utils.decorators import apply_defaults
-from airflow.exceptions import AirflowException
-from pathlib import Path
-import pandas as pd
-import psycopg2
 import io
 import re
 import os
+from pathlib import Path
 
-def custom_tuple(entry, id_col=6, str_col=2):
-    entry[id_col] = None if pd.isna(entry[id_col]) else int(entry[id_col])
-    entry[str_col] = None if pd.isna(entry[str_col]) else entry[str_col]
+import pandas as pd
+import psycopg2
+from airflow.models import BaseOperator
+from airflow.utils.decorators import apply_defaults
+from airflow.exceptions import AirflowException
+from airflow.providers.google.cloud.hooks.gcs import GCSHook
+from airflow.providers.google.cloud.hooks.cloud_sql import CloudSQLDatabaseHook
 
-    return tuple(entry)
 
 class GCSToPostgresTransfer(BaseOperator):
     """GCSToPostgresTransfer: custom operator created to move small CSV files
@@ -84,11 +80,15 @@ class GCSToPostgresTransfer(BaseOperator):
         int_cols = ['Quantity', 'CustomerID']
         float_cols = ['UnitPrice']
         date_cols = ['InvoiceDate']
+        string_columns = ["InvoiceNo", "StockCode", "Description", "Country"]
 
         # read a csv file with the properties required.
         df_products = pd.read_csv(io.StringIO(csv_str_content))
         self.log.info(df_products)
         self.log.info(df_products.info())
+
+        # drop nan values from customer id
+        df_products = df_products[df_products["CustomerID"].notna()]
 
         # parsing correct data type
         for int_col in int_cols:
@@ -103,11 +103,18 @@ class GCSToPostgresTransfer(BaseOperator):
 
         self.log.info("Columns parsed")
 
-        # formatting and converting the dataframe object in list to prepare the income of the next steps.
-        df_products = df_products.replace(r"[\"]", r"'")
-        list_df_products = df_products.values.tolist()
-        list_df_products = [custom_tuple(x) for x in list_df_products]
-        self.log.info("Tuples generated")
+        # formatting the dataframe.
+        for string_column in string_columns:
+            df_products[string_column] = df_products[string_column].str.strip()
+            df_products[string_column] = df_products[string_column].str.replace(
+                "\"", "")
+
+        # save df to csv file.
+        self.log.info("Dataset clean")
+
+        tmp_clean_csv_location = "user_purchase_clean.csv"
+        df_products.to_csv(tmp_clean_csv_location, index=False)
+        self.log.info("DF saved to CSV")
 
         # Read the file with the DDL SQL to create the table products in postgres DB.
         query_file_path = Path(os.environ["PG_QUERY_PATH"])
@@ -127,23 +134,9 @@ class GCSToPostgresTransfer(BaseOperator):
 
         # execute command to create table in postgres.
         self.pg_hook.run(sql_command)
+        self.log.info("Schema and table created")
 
-        # set the columns to insert, in this case we ignore the id, because is autogenerate.
-        list_target_fields = [
-            "invoice_number",
-            "stock_code",
-            "detail",
-            "quantity",
-            "invoice_date",
-            "unit_price",
-            "customer_id",
-            "country"
-        ]
-
-        self.current_table = self.schema + '.' + self.table
-        self.pg_hook.insert_rows(self.current_table,
-                                 list_df_products,
-                                 target_fields=list_target_fields,
-                                 commit_every=1000,
-                                 replace=False)
-
+        # execute command to send csv to sql
+        self.pg_hook.run("SET datestyle = ISO;")
+        self.pg_hook.copy_expert(
+            f"COPY {schema}.{table} FROM STDIN WITH CSV HEADER", tmp_clean_csv_location)

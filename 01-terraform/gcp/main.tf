@@ -1,8 +1,7 @@
 module "vpc" {
   source = "./modules/vpc"
-
+  
   project_id = var.project_id
-
 }
 
 module "gke" {
@@ -42,19 +41,12 @@ module "dataproc" {
   region          = var.region
   location        = var.location
   subnetwork_name = module.vpc.private_subnetwork_name
-}
-
-
-module "raw-bucket" {
-  source = "./modules/raw-bucket"
-  
-  raw_bucket_name = var.raw_bucket_name
-  location = var.region
-}
-
-module "staging-bucket" {
-  source = "./modules/staging-bucket"
-  
   staging_bucket_name = var.staging_bucket_name
-  location = var.region
+  temp_bucket_name = var.temp_bucket_name
+}
+
+module "bigquery" {
+  source = "./modules/bigquery"
+  bq_dataset_id = var.bq_dataset_id
+  bq_location = var.region
 }
