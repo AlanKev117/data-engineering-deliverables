@@ -6,13 +6,16 @@ from airflow.providers.google.cloud.operators.dataproc import DataprocSubmitJobO
 from airflow.hooks.base import BaseHook
 
 # get dataproc data from env variables
-PROJECT_ID = os.environ["PROJECT_ID"]
-CLUSTER_NAME = os.environ["CLUSTER_NAME"]
-MAIN_JOB_URI = os.environ["MAIN_JOB_URI"]
-RAW_BUCKET_URI = os.environ["RAW_BUCKET_URI"]
-STAGING_BUCKET_URI = os.environ["STAGING_BUCKET_URI"]
-CLUSTER_REGION = os.environ["CLUSTER_REGION"]
-SCHEMA = os.environ["DB_SCHEMA"]
+GCP_PROJECT_ID = os.environ["GCP_PROJECT_ID"]
+
+SQL_SCHEMA = os.environ["SQL_SCHEMA"]
+
+DATAPROC_JOB_URI = os.environ["DATAPROC_JOB_URI"]
+DATAPROC_REGION = os.environ["DATAPROC_REGION"]
+DATAPROC_CLUSTER = os.environ["DATAPROC_CLUSTER"]
+
+STORAGE_RAW_BUCKET = os.environ["STORAGE_RAW_BUCKET"]
+STORAGE_STAGING_BUCKET = os.environ["STORAGE_STAGING_BUCKET"]
 
 # safely fetch sensitive connection data
 cloud_sql_connection = BaseHook.get_connection("google_cloud_sql_default")
@@ -29,16 +32,16 @@ ARGS = ["--host", HOST,
         "--user", LOGIN,
         "--pw", PW,
         "--db", DATABASE,
-        "--schema", SCHEMA,
+        "--schema", SQL_SCHEMA,
         "--table", TABLE,
-        "--raw-bucket", RAW_BUCKET_URI,
-        "--staging-bucket", STAGING_BUCKET_URI]
+        "--raw-bucket", STORAGE_RAW_BUCKET,
+        "--staging-bucket", STORAGE_STAGING_BUCKET]
 
 PYSPARK_JOB = {
-    "placement": {"cluster_name": CLUSTER_NAME},
+    "placement": {"cluster_name": DATAPROC_CLUSTER},
     "pyspark_job": {
         "jar_file_uris": ["https://jdbc.postgresql.org/download/postgresql-42.3.1.jar"],
-        "main_python_file_uri": MAIN_JOB_URI,
+        "main_python_file_uri": DATAPROC_JOB_URI,
         "args": ARGS
     }
 }
@@ -57,8 +60,8 @@ dag = DAG('movie_review_classification',
 submit_pyspark_job = DataprocSubmitJobOperator(
     task_id="review_classification",
     job=PYSPARK_JOB,
-    region=CLUSTER_REGION,
-    project_id=PROJECT_ID
+    region=DATAPROC_REGION,
+    project_id=GCP_PROJECT_ID
 )
 
 submit_pyspark_job

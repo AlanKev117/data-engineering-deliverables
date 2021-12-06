@@ -2,6 +2,7 @@ images:
   airflow:
     repository: fugalkev/myairflow
     tag: 0.0.9
+
 logs:
   persistence:
     # Enable persistent volume for storing logs
@@ -23,52 +24,59 @@ workers:
         secretName: gcp-key
 
 env:
+  # GCP vars
   - name: "GOOGLE_APPLICATION_CREDENTIALS"
     value: "/opt/airflow/secrets/gcp-key/gcp-key.json"
-  - name: "AIRFLOW_CONN_CLOUD_SQL_DEFAULT"
+  - name: "AIRFLOW_CONN_GOOGLE_CLOUD_DEFAULT" # called GCP_CONNECTION_URI in env file
     valueFrom:
       secretKeyRef:
-        name: gcp-sql
+        name: gcp
         key: uri
-  - name: "CLOUD_SQL_HOST"
+  - name: "GCP_PROJECT_ID"
+    valueFrom:
+      secretKeyRef:
+        name: gcp
+        key: project-id
+  # SQL vars
+  - name: "AIRFLOW_CONN_GOOGLE_CLOUD_SQL_DEFAULT" # called SQL_CONNECTION_URI in env file
     valueFrom:
       secretKeyRef:
         name: gcp-sql
-        key: host
-  - name: "CLOUD_SQL_LOGIN"
+        key: uri  
+  - name: "SQL_SCHEMA"
     valueFrom:
       secretKeyRef:
         name: gcp-sql
-        key: login
-  - name: "CLOUD_SQL_PW"
+        key: schema  
+  - name: "SQL_TABLE"
     valueFrom:
       secretKeyRef:
         name: gcp-sql
-        key: pw
-  - name: "CLOUD_SQL_PORT"
+        key: table
+  # Dataproc vars
+  - name: "DATAPROC_CLUSTER"
     valueFrom:
       secretKeyRef:
-        name: gcp-sql
-        key: port
-  - name: "CLOUD_SQL_SCHEMA"
+        name: gcp-dataproc
+        key: cluster
+  - name: "DATAPROC_JOB_URI"
     valueFrom:
       secretKeyRef:
-        name: gcp-sql
-        key: schema
-  - name: "CLOUD_SQL_LOCATION"
+        name: gcp-dataproc
+        key: job-uri
+  - name: "DATAPROC_REGION"
     valueFrom:
       secretKeyRef:
-        name: gcp-sql
-        key: type
-  - name: "CLOUD_SQL_INSTANCE"
+        name: gcp-dataproc
+        key: region
+  # Storage vars
+  - name: "STORAGE_RAW_BUCKET"
     valueFrom:
       secretKeyRef:
-        name: gcp-sql
-        key: instance
-  - name: "CLOUD_SQL_TYPE"
+        name: gcp-storage
+        key: raw
+  - name: "STORAGE_STAGING_BUCKET"
     valueFrom:
       secretKeyRef:
-        name: gcp-sql
-        key: type
-
-      
+        name: gcp-storage
+        key: staging

@@ -6,10 +6,10 @@ TERRAFORM_DIR=../01-terraform/gcp/
 # Set your env file with the connection variables data
 SQL_CONN_ENV_FILE=connection.env
 
-# Set your service account JSON file
+# Path to your service account JSON file
 GCP_KEY_FILE=gcp-key.json
 
-# Save call directory
+# Save worrking directory and swap it to terraform's
 CURRENT_DIR=$(pwd)
 cd $TERRAFORM_DIR
 
@@ -18,10 +18,10 @@ cd $TERRAFORM_DIR
 # Get GKE credentials for kubectl
 gcloud container clusters get-credentials $(terraform output -raw kubernetes_cluster_name) --region $(terraform output -raw location)
 
-# Load secrets
+# Load secrets env vars
 source ${CURRENT_DIR}/${SQL_CONN_ENV_FILE}
 
-# Restore call directory
+# Restore working directory
 cd $CURRENT_DIR
 
 # Create nfs server
@@ -44,29 +44,34 @@ helm install airflow apache-airflow/airflow -n airflow -f values.yaml
 
 # Install secrets
 
+# SA key file secret
 kubectl create secret generic gcp-key \
     --from-file=gcp-key.json=${GCP_KEY_FILE} \
     --namespace airflow
 
-kubectl create secret generic gcp-sql \
-    --from-literal=host=${CLOUD_SQL_HOST} \
-    --from-literal=login=${CLOUD_SQL_LOGIN} \
-    --from-literal=pw=${CLOUD_SQL_PW} \
-    --from-literal=port=${CLOUD_SQL_PORT} \
-    --from-literal=schema=${CLOUD_SQL_DB} \
-    --from-literal=type=${CLOUD_SQL_LOCATION} \
-    --from-literal=instance=${CLOUD_SQL_INSTANCE} \
-    --from-literal=type=${CLOUD_SQL_TYPE} \
-    --from-literal=uri=${AIRFLOW_URI} \
+# GCP secrets
+kubectl create secret generic gcp \
+    --from-literal=project-id=${GCP_PROJECT_ID} \
+    --from-literal=uri=${GCP_CONNECTION_URI}
     --namespace airflow
 
-# Ease vars once they are stored as secrets
-unset CLOUD_SQL_HOST
-unset CLOUD_SQL_LOGIN
-unset CLOUD_SQL_PW
-unset CLOUD_SQL_PORT
-unset CLOUD_SQL_DB
-unset CLOUD_SQL_LOCATION
-unset CLOUD_SQL_INSTANCE
-unset CLOUD_SQL_TYPE
-unset AIRFLOW_URI
+# SQL secrets
+kubectl create secret generic gcp-sql \
+    --from-literal=schema=${SQL_SCHEMA} \
+    --from-literal=table=${SQL_TABLE} \
+    --from-literal=uri=${SQL_CONNECTION_URI} \
+    --namespace airflow
+
+# Dataproc secrets
+kubectl create secret generic gcp-dataproc \
+    --from-literal=cluster=${DATAPROC_CLUSTER}
+    --from-literal=job-uri=${DATAPROC_JOB_URI}
+    --from-literal=region=${DATAPROC_REGION}
+    --namespace airflow
+
+kubectl create secret generic gcp-storage \
+    --from-literal=raw=${STORAGE_RAW_BUCKET}
+    --from-literal=staging=${STORAGE_STAGING_BUCKET}
+    --namespace airflow
+
+# Erase vars once they are stored as secrets

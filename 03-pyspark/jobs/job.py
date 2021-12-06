@@ -9,7 +9,6 @@ from pyspark.ml.feature import StopWordsRemover
 import pyspark.sql.functions as f
 
 # Parsing arguments (database conection data)
-
 parser = argparse.ArgumentParser()
 parser.add_argument("--host")
 parser.add_argument("--port")
@@ -34,7 +33,6 @@ TABLE = args.table
 # CLoud storage variables
 RAW_BUCKET = args.raw_bucket
 STAGING_BUCKET = args.staging_bucket
-MOVIE_REVIEW_OBJECT = "movie_review.csv"
 
 # Init spark session
 # findspark.init()
@@ -51,7 +49,7 @@ user_purchase_data = (spark.read
                       .load())
 
 # Read data from Cloud Storage
-movie_review_data = spark.read.csv(f"{RAW_BUCKET}/{MOVIE_REVIEW_OBJECT}")
+movie_review_data = spark.read.csv(f"gs://{RAW_BUCKET}/movie_review.csv")
 
 
 # Tokenization
@@ -76,4 +74,4 @@ movie_review_data = spark.read.csv(f"{RAW_BUCKET}/{MOVIE_REVIEW_OBJECT}")
 # output_classified = classified.select("cid", "positive_review")
 # output_classified.write.csv(f"{STAGING_BUCKET}/review.csv")
 
-movie_review_data.write.csv(f"{STAGING_BUCKET}/purchase.csv")
+movie_review_data.write.csv(f"gs://{STAGING_BUCKET}/purchase.csv")
