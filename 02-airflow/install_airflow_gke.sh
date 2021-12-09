@@ -7,7 +7,7 @@ CALL_DIR=$(pwd)
 TERRAFORM_DIR=../01-terraform
 
 # file with env variables for airflow cluster (relative to current working directory)
-SQL_CONN_ENV_FILE=connection.env
+SQL_CONN_ENV_FILE=airflow.env
 
 # Path to your service account JSON file (relative to current working directory)
 GCP_KEY_FILE=gcp-key.json
@@ -46,7 +46,6 @@ helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs
 # Deploy airflow
 kubectl create namespace airflow
 helm repo add apache-airflow https://airflow.apache.org
-helm install airflow apache-airflow/airflow -n airflow -f values.yaml
 
 # Install secrets
 
@@ -58,7 +57,7 @@ kubectl create secret generic gcp-key \
 # GCP secrets
 kubectl create secret generic gcp \
     --from-literal=project-id=${GCP_PROJECT_ID} \
-    --from-literal=uri=${GCP_CONNECTION_URI}
+    --from-literal=uri=${GCP_CONNECTION_URI} \
     --namespace airflow
 
 # SQL secrets
@@ -69,15 +68,22 @@ kubectl create secret generic gcp-sql \
 
 # Dataproc secrets
 kubectl create secret generic gcp-dataproc \
-    --from-literal=cluster=${DATAPROC_CLUSTER}
-    --from-literal=job-name=${DATAPROC_JOB_NAME}
-    --from-literal=region=${DATAPROC_REGION}
+    --from-literal=cluster=${DATAPROC_CLUSTER} \
+    --from-literal=job-name=${DATAPROC_JOB_NAME} \
+    --from-literal=region=${DATAPROC_REGION} \
     --namespace airflow
 
 kubectl create secret generic gcp-storage \
-    --from-literal=raw=${STORAGE_RAW_BUCKET}
-    --from-literal=staging=${STORAGE_STAGING_BUCKET}
+    --from-literal=raw=${STORAGE_RAW_BUCKET} \
+    --from-literal=staging=${STORAGE_STAGING_BUCKET} \
     --namespace airflow
+
+kubectl create secret generic gcp-bq \
+    --from-literal=dataset=${BQ_DATASET_NAME} \
+    --namespace airflow
+
+
+helm install airflow apache-airflow/airflow -n airflow -f values.yaml
 
 # Erase vars once they are stored as secrets
 unset GCP_PROJECT_ID
@@ -97,5 +103,6 @@ unset SQL_LOGIN
 unset SQL_PW
 unset SQL_DB
 unset SQL_INSTANCE
+unset BQ_DATASET_NAME
 
 rm -f $GCP_KEY_FILE

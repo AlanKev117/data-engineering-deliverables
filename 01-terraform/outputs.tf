@@ -72,6 +72,10 @@ output "movie_review_output_name" {
   value = module.buckets.movie_review_output_name
 }
 
+output "bq_dataset_name" {
+  value = var.bq_dataset_id
+}
+
 output "sa_key_json_output" {
   value = module.service-account.sa_key_json_output
   sensitive = true

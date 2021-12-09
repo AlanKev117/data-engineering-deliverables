@@ -9,7 +9,7 @@ from airflow import DAG
 from gcs_to_postgres import GCSToPostgresTransfer
 
 SQL_SCHEMA = os.environ["SQL_SCHEMA"]
-SQL_TABLE = os.environ["SQL_TABLE"]
+SQL_TABLE = "user_purchase"
 
 STORAGE_RAW_BUCKET = os.environ["STORAGE_RAW_BUCKET"]
 
@@ -20,7 +20,7 @@ default_args = {
     'start_date': airflow.utils.dates.days_ago(1)
 }
 
-dag = DAG('load_products', default_args=default_args,
+dag = DAG('extract_products', default_args=default_args,
           schedule_interval='@daily')
 
 process_dag = GCSToPostgresTransfer(

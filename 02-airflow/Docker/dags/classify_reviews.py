@@ -28,7 +28,7 @@ DATABASE = cloud_sql_connection.schema
 TABLE = 'user_purchase'
 
 ARGS = ["--host", HOST,
-        "--port", PORT,
+        "--port", str(PORT),
         "--user", LOGIN,
         "--pw", PW,
         "--db", DATABASE,
@@ -53,7 +53,7 @@ default_args = {
     'start_date': airflow.utils.dates.days_ago(1)
 }
 
-dag = DAG('movie_review_classification',
+dag = DAG('classify_reviews',
           default_args=default_args, schedule_interval='@daily')
 
 
@@ -61,7 +61,8 @@ submit_pyspark_job = DataprocSubmitJobOperator(
     task_id="review_classification",
     job=PYSPARK_JOB,
     region=DATAPROC_REGION,
-    project_id=GCP_PROJECT_ID
+    project_id=GCP_PROJECT_ID,
+    dag=dag
 )
 
 submit_pyspark_job

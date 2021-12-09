@@ -139,4 +139,4 @@ class GCSToPostgresTransfer(BaseOperator):
         # execute command to send csv to sql
         self.pg_hook.run("SET datestyle = ISO;")
         self.pg_hook.copy_expert(
-            f"COPY {schema}.{table} FROM STDIN WITH CSV HEADER", tmp_clean_csv_location)
+            f"COPY {self.schema}.{self.table} FROM STDIN WITH CSV HEADER", tmp_clean_csv_location)

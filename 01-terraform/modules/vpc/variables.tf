@@ -64,3 +64,7 @@ variable "public_subnets" {
     # "10.128.14.0/24",
     ]
 }
+
+variable "region" {
+  
+}

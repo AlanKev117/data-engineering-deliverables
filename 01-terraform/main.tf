@@ -2,6 +2,7 @@ module "vpc" {
   source = "./modules/vpc"
   
   project_id = var.project_id
+  region = var.region
 }
 
 module "gke" {
@@ -68,4 +69,6 @@ module "buckets" {
 
 module "service-account" {
   source = "./modules/service-account"
+
+  project_id = var.project_id
 }

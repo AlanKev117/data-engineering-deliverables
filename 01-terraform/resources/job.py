@@ -26,7 +26,7 @@ parser.add_argument("--schema")
 parser.add_argument("--table")
 parser.add_argument("--raw-bucket-uri")
 parser.add_argument("--staging-bucket-uri")
-args = parser.parse_args(sys.argv)
+args = parser.parse_args(sys.argv[1:])
 
 # SQL variables
 HOST = args.host
@@ -99,9 +99,9 @@ behavior_metrics_df = spark.sql("""
 
 # Store data to parquet files in staging bucket
 
-user_purchase_df.repartition(1).write.parquet(
+user_purchase_df.write.parquet(
     f"{STAGING_BUCKET_URI}/user_purchase")
-reviews_df.repartition(1).write.parquet(
+reviews_df.write.parquet(
     f"{STAGING_BUCKET_URI}/reviews")
-behavior_metrics_df.repartition(1).write.parquet(
+behavior_metrics_df.write.parquet(
     f"{STAGING_BUCKET_URI}/behavior_metrics")
