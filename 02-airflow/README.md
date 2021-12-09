@@ -20,7 +20,7 @@ First, a brief description of the config files:
 
 - `nfs-server.yaml` has `helm` configuration to create an NFS volume to store Airflow DAGs
 - `values.yaml` has `helm` configuration to install Airflow with the *Airflow Helm Chart*. It contains a list of environments variables that need to be set in the cluster to configure connections, secrets, and so on.
-- `airflow.env` it is a script-like `.env` file that will fetch outputs from Terraform and temporarily store them locally in env vars that will be read by the `[install_airflow_gke.sh](http://airflow-install-gke.sh)` script
+- `airflow.env` it is a script-like `.env` file that will fetch outputs from Terraform and temporarily store them locally in env vars that will be read by the `install_airflow_gke.sh` script
 
 To install Airflow in your cluster, run this command from within the `02-airflow` directory
 
@@ -29,7 +29,7 @@ To install Airflow in your cluster, run this command from within the `02-airflow
 bash install_airflow_gke.sh
 ```
 
-To remove installation done by `[install_airflow_gke.sh](http://airflow-install-gke.sh)`, run the uninstall script provided.
+To remove installation done by `install_airflow_gke.sh`, run the uninstall script provided.
 
 ```bash
 # run inside 02-airflow
@@ -45,4 +45,4 @@ kubectl port-forward svc/airflow-webserver 8080:8080 --namespace airflow
 # exit with ctrl + c
 ```
 
-Now you can go to `[localhost:8080](http://localhost:8080)` from your web browser and access with user `admin` and password `admin` to view and invoke DAGs.
+Now you can go to `localhost:8080` from your web browser and access with user `admin` and password `admin` to view and invoke DAGs.

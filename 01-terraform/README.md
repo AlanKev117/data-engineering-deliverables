@@ -2,6 +2,8 @@
 
 Here you will find the Terraform modules that instantiate all Google Cloud Platform services needed to create the pipeline.
 
+The `resources` directory contains files to upload to a GCS bucket such as the raw data CSV files and the PySpark job.
+
 First, you need to decompress the CSV files included in raw_data.zip
 
 ```bash
