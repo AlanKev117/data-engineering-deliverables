@@ -1,6 +1,6 @@
 # Prerequisites
 
-You need to follow some first steps prior to deploy the data pipeline
+You need to follow some first steps prior to deploying the data pipeline.
 
 ## Required software
 
@@ -13,7 +13,7 @@ Install the following tools according to your OS
 - helm (Kubernetes Package Manager)
 
 ## Auth to GCP
-
+Make sure to create a GCP project on [Google Cloud Console](https://console.cloud.google.com/).
 After you've installed the `gcloud` SDK, initialize it by running the following command.
 
 ```bash
