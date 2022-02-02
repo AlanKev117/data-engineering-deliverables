@@ -50,10 +50,11 @@ data-engineering-*.json
 # python cache
 __pycache__
 
-# Decompressed raw data files
+# CSV files
 *.csv
 
 # Python virtual env
 env/
+dea/
 
 *.jar

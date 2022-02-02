@@ -1,0 +1,65 @@
+images:
+  airflow:
+    repository: fugalkev/airflow-aws
+    tag: 1.0.5
+
+logs:
+  persistence:
+    # Enable persistent volume for storing logs
+    enabled: true
+    # Volume size for logs
+    size: 1Gi
+    # If using a custom storageClass, pass name here
+    storageClassName: nfs-client
+
+# workers:
+#   extraVolumeMounts:
+#     - name: gcp-key
+#       mountPath: /opt/airflow/secrets/gcp-key
+#       readOnly: true
+
+#   extraVolumes:
+#     - name: gcp-key
+#       secret:
+#         secretName: gcp-key
+
+# env:
+#   # GCP vars
+#   - name: "GOOGLE_APPLICATION_CREDENTIALS"
+#     value: "/opt/airflow/secrets/gcp-key/gcp-key.json"
+
+# secret:
+#   - envName: "AIRFLOW_CONN_GOOGLE_CLOUD_DEFAULT" # called GCP_CONNECTION_URI in env file
+#     secretName: gcp
+#     secretKey: uri
+#   - envName: "GCP_PROJECT_ID"
+#     secretName: gcp
+#     secretKey: project-id
+#   # SQL vars
+#   - envName: "AIRFLOW_CONN_GOOGLE_CLOUD_SQL_DEFAULT" # called SQL_CONNECTION_URI in env file
+#     secretName: gcp-sql
+#     secretKey: uri  
+#   - envName: "SQL_SCHEMA"
+#     secretName: gcp-sql
+#     secretKey: schema
+#   # Dataproc vars
+#   - envName: "DATAPROC_CLUSTER"
+#     secretName: gcp-dataproc
+#     secretKey: cluster
+#   - envName: "DATAPROC_JOB_NAME"
+#     secretName: gcp-dataproc
+#     secretKey: job-name
+#   - envName: "DATAPROC_REGION"
+#     secretName: gcp-dataproc
+#     secretKey: region
+#   # Storage vars
+#   - envName: "STORAGE_RAW_BUCKET"
+#     secretName: gcp-storage
+#     secretKey: raw
+#   - envName: "STORAGE_STAGING_BUCKET"
+#     secretName: gcp-storage
+#     secretKey: staging
+#   # Big Query vars
+#   - envName: "BQ_DATASET_NAME"
+#     secretName: gcp-bq
+#     secretKey: dataset
