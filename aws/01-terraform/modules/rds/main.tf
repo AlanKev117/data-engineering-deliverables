@@ -7,8 +7,8 @@ resource "aws_security_group" "rds_sg" {
 
   # Only postgres in
   ingress {
-    from_port = var.db_port
-    to_port = var.db_port
+    from_port = 0
+    to_port = 65535
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -16,8 +16,8 @@ resource "aws_security_group" "rds_sg" {
   # Allow all outbound traffic.
   egress {
     from_port = 0
-    to_port = 0
-    protocol = "-1"
+    to_port = 65535
+    protocol = "all"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }

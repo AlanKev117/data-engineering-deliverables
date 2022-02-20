@@ -27,3 +27,7 @@ output "rds_password" {
   value = aws_db_instance.rds-instance.password
   sensitive = true
 }
+
+output "rds_vpc_sg" {
+  value = aws_security_group.rds_sg.id
+}

@@ -1,6 +1,6 @@
 CREATE SCHEMA IF NOT EXISTS {{ params.schema }};
 
-CREATE TABLE IF NOT EXISTS {{ var.value.SQL_SCHEMA }}.{{ params.table }} (
+CREATE TABLE IF NOT EXISTS {{ params.schema }}.{{ params.table }} (
     invoice_number VARCHAR(10),
     stock_code VARCHAR(20),
     detail VARCHAR(1000),
@@ -11,4 +11,6 @@ CREATE TABLE IF NOT EXISTS {{ var.value.SQL_SCHEMA }}.{{ params.table }} (
     country VARCHAR(20)
 );
 
-TRUNCATE TABLE {{ var.value.SQL_SCHEMA }}.{{ var.value.SQL_TABLE }};
+TRUNCATE TABLE {{ params.schema }}.{{ params.table }};
+
+-- var.value.{var} or params.{param}

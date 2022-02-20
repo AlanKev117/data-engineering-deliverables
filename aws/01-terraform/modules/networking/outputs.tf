@@ -33,3 +33,11 @@ output "internet_gateway_id" {
 output "availability_zone" {
   value = var.availability_zone
 }
+
+output "priv_subnet_id" {
+  value = aws_subnet.private_subnet[0].id
+}
+
+output "priv_subnet_az" {
+  value = aws_subnet.private_subnet[0].availability_zone
+}

@@ -8,7 +8,6 @@ module "networking" {
   availability_zone    = var.availability_zone
 }
 
-
 module "eks" {
   source = "./modules/eks"
 
@@ -65,4 +64,25 @@ module "s3" {
   versioning    = var.versioning
 
   csv_user_purchase_path = var.csv_user_purchase_path
+  csv_movie_review_path = var.csv_movie_review_path
+  csv_log_reviews_path = var.csv_log_reviews_path
+  glue_job_path = var.glue_job_path
+
 }
+
+module "glue" {
+  source = "./modules/glue"
+
+  gc_db_type = var.db_engine
+  gc_db_endpoint = module.rds.rds_endpoint
+  gc_db_name = module.rds.rds_database
+  gc_db_password = module.rds.rds_password
+  gc_db_username = module.rds.rds_username
+  gc_subnet_az = module.networking.priv_subnet_az
+  gc_secgroup_id = module.rds.rds_vpc_sg
+  gc_subnet_id = module.networking.priv_subnet_id
+  gj_bucket_id = module.s3.s3_bucket_id
+  gj_job_id = module.s3.s3_glue_job_key
+  gj_class = var.gj_class
+}
+

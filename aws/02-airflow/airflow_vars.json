@@ -1,7 +1,0 @@
-{
-    "SQL_TABLE": "user_purchase",
-    "SQL_SCHEMA": "dataeng",
-    "SQL_QUERY": "create_schema_and_table.sql",
-    "CSV_BUCKET": "s3-data-bootcamp-20220202034228757200000001",
-    "CSV_FILE": "user_purchase.csv"
-}

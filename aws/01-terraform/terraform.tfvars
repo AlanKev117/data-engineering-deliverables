@@ -68,6 +68,12 @@ bucket_prefix = "s3-data-bootcamp-"
 
 acl = "private"
 
-versioning = true
+versioning = false
 
-csv_user_purchase_path = "resources/user_purchase.csv"
+csv_user_purchase_path = "resources/csv/user_purchase.csv"
+csv_movie_review_path = "resources/csv/movie_review.csv"
+csv_log_reviews_path = "resources/csv/log_reviews.csv"
+glue_job_path = "resources/aws-glue-jobs/Transform.scala"
+
+### glue ###
+gj_class = "Sentiment"

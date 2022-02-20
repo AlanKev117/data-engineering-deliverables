@@ -114,6 +114,18 @@ variable "csv_user_purchase_path" {
   description = "Path to user purchase CSV file"
 }
 
+variable "csv_movie_review_path" {
+  description = "Path to movie review CSV file"
+}
+
+variable "csv_log_reviews_path" {
+  description = "Path to log reviews CSV file"
+}
+
+variable "glue_job_path" {
+  description = "Path to AWS Glue job path"
+}
+
 ### eks ###
 variable "cluster_name" {
   description = "The name of the Airflow cluster (e.g. airflow-xyz). This variable is used to namespace all resources created by this module."
@@ -143,4 +155,9 @@ variable "asg_desired_capacity_group1" {
 variable "asg_desired_capacity_group2" {
   default     = 1
   description = "Desired capacity for autoscaling for the group 2"
+}
+
+### glue ###
+variable "gj_class" {
+    description = "External - main scala class that houses job main function"
 }

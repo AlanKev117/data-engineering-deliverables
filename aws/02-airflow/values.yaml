@@ -1,7 +1,7 @@
 images:
   airflow:
     repository: fugalkev/airflow-aws
-    tag: 1.0.5
+    tag: 1.1.1
 
 logs:
   persistence:
@@ -12,54 +12,39 @@ logs:
     # If using a custom storageClass, pass name here
     storageClassName: nfs-client
 
-# workers:
-#   extraVolumeMounts:
-#     - name: gcp-key
-#       mountPath: /opt/airflow/secrets/gcp-key
-#       readOnly: true
-
-#   extraVolumes:
-#     - name: gcp-key
-#       secret:
-#         secretName: gcp-key
-
-# env:
-#   # GCP vars
-#   - name: "GOOGLE_APPLICATION_CREDENTIALS"
-#     value: "/opt/airflow/secrets/gcp-key/gcp-key.json"
-
-# secret:
-#   - envName: "AIRFLOW_CONN_GOOGLE_CLOUD_DEFAULT" # called GCP_CONNECTION_URI in env file
-#     secretName: gcp
-#     secretKey: uri
-#   - envName: "GCP_PROJECT_ID"
-#     secretName: gcp
-#     secretKey: project-id
-#   # SQL vars
-#   - envName: "AIRFLOW_CONN_GOOGLE_CLOUD_SQL_DEFAULT" # called SQL_CONNECTION_URI in env file
-#     secretName: gcp-sql
-#     secretKey: uri  
-#   - envName: "SQL_SCHEMA"
-#     secretName: gcp-sql
-#     secretKey: schema
-#   # Dataproc vars
-#   - envName: "DATAPROC_CLUSTER"
-#     secretName: gcp-dataproc
-#     secretKey: cluster
-#   - envName: "DATAPROC_JOB_NAME"
-#     secretName: gcp-dataproc
-#     secretKey: job-name
-#   - envName: "DATAPROC_REGION"
-#     secretName: gcp-dataproc
-#     secretKey: region
-#   # Storage vars
-#   - envName: "STORAGE_RAW_BUCKET"
-#     secretName: gcp-storage
-#     secretKey: raw
-#   - envName: "STORAGE_STAGING_BUCKET"
-#     secretName: gcp-storage
-#     secretKey: staging
-#   # Big Query vars
-#   - envName: "BQ_DATASET_NAME"
-#     secretName: gcp-bq
-#     secretKey: dataset
+secret:
+  # Connections
+  - envName: "AIRFLOW_CONN_AWS_DEFAULT"
+    secretName: af-connections
+    secretKey: aws
+  - envName: "AIRFLOW_CONN_POSTGRES_DEFAULT"
+    secretName: af-connections
+    secretKey: postgres
+  # Variables
+  - envName: "AIRFLOW_VAR_BUCKET"
+    secretName: af-variables
+    secretKey: bucket
+  - envName: "AIRFLOW_VAR_LOGREV_KEY"
+    secretName: af-variables
+    secretKey: logrev_key
+  - envName: "AIRFLOW_VAR_MOVREV_KEY"
+    secretName: af-variables
+    secretKey: movrev_key
+  - envName: "AIRFLOW_VAR_USRPUR_KEY"
+    secretName: af-variables
+    secretKey: usrpur_key
+  - envName: "AIRFLOW_VAR_USRPUR_TABLE"
+    secretName: af-variables
+    secretKey: usrpur_table
+  - envName: "AIRFLOW_VAR_USRPUR_SCHEMA"
+    secretName: af-variables
+    secretKey: usrpur_schema
+  - envName: "AIRFLOW_VAR_USRPUR_QUERY"
+    secretName: af-variables
+    secretKey: usrpur_query
+  - envName: "AIRFLOW_VAR_GLUEJOB"
+    secretName: af-variables
+    secretKey: gluejob
+  - envName: "AIRFLOW_VAR_REGION"
+    secretName: af-variables
+    secretKey: region

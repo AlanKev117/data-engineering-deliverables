@@ -57,4 +57,18 @@ __pycache__
 env/
 dea/
 
+# Jar libraries/files
 *.jar
+
+# VS Code settings files
+.vscode
+.metals
+.scalafmt.conf
+
+# Exploratory analisys files and maven compile files
+aws/03-spark/scala-project/explore
+aws/03-spark/scala-project/target
+
+
+# MacOS files
+.DS_Store
