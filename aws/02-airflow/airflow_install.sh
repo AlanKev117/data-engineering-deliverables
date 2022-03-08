@@ -34,6 +34,9 @@ AFVAR_USRPUR_QUERY="create_schema_and_table.sql"  # must match file name in Dock
 AFVAR_GLUEJOB=$(terraform output -raw gj_name)
 AFVAR_REGION=$(terraform output -raw region)
 
+AFVAR_ATHDB=$(terraform output -raw ath-db-name)
+AFVAR_ATHBUCKET=$(terraform output -raw ath-out-bucket)
+
 cd $CALL_DIR
 
 # Enable nfs server for cluster
@@ -64,6 +67,8 @@ kubectl create secret generic af-variables \
     --from-literal=usrpur_query=${AFVAR_USRPUR_QUERY} \
     --from-literal=gluejob=${AFVAR_GLUEJOB} \
     --from-literal=region=${AFVAR_REGION} \
+    --from-literal=athdb=${AFVAR_ATHDB} \
+    --from-literal=athbucket=${AFVAR_ATHBUCKET} \
     --namespace airflow
 
 # Install airflow after secrets set

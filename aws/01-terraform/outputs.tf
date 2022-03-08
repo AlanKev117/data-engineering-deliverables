@@ -49,3 +49,11 @@ output "s3_csv_user_purchase_key" {
 output "gj_name" {
   value = module.glue.gj_name
 }
+
+output "ath-db-name" {
+  value = module.athena.ath-db-name
+}
+
+output "ath-out-bucket" {
+  value = module.athena.ath-out-bucket
+}

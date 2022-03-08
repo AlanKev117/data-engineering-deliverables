@@ -76,4 +76,4 @@ csv_log_reviews_path = "resources/csv/log_reviews.csv"
 glue_job_path = "resources/aws-glue-jobs/Transform.scala"
 
 ### glue ###
-gj_class = "Sentiment"
+gj_class = "ETL"

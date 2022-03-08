@@ -8,7 +8,6 @@ import java.util.Properties
 import scala.collection.convert.wrapAll._
 import scala.collection.JavaConverters._
 
-
 object Logics {
 
   def movieReviewLogicHasGood(
@@ -22,13 +21,13 @@ object Logics {
     // Transformation using word matching.
     val hasGoodUdf = udf { (rev: String) => if (rev.contains("good")) 1 else 0 }
     movieReview
-      .toDF("user_id", "review_str", "review_id")
+      .toDF("customer_id", "review_str", "review_id")
       .na
       .drop()
       .select(
-        'user_id,
+        'customer_id.cast("int").as('customer_id),
         hasGoodUdf('review_str).as('positive_review),
-        'review_id
+        'review_id.cast("int").as('review_id)
       )
   }
 
@@ -69,19 +68,19 @@ object Logics {
       """)
       .withColumn("browser", osToBrowserUdf(col("os")))
       .select(
-        "log_id",
-        "log_date",
-        "device",
-        "os",
-        "location",
-        "browser",
-        "ip",
-        "phone_number"
+        col("log_id").cast("int").as('log_id),
+        to_date(col("log_date"), "MM-dd-yyyy").as("log_date"),
+        col("device"),
+        col("os"),
+        col("location"),
+        col("browser"),
+        col("ip"),
+        col("phone_number")
       )
   }
 }
 
-object Sentiment {
+object ETL {
 
   def main(sysArgs: Array[String]) = {
     // Instanciate Glue's Spark Session
@@ -107,7 +106,7 @@ object Sentiment {
     Job.init(args("JOB_NAME"), glueContext, args.asJava)
 
     val Endpoint = args("db_endpoint")
-    val Database = args("db_database")
+    val Database = args("db_name")
     val Table = args("db_table")
     val User = args("db_user")
     val Password = args("db_password")
@@ -131,7 +130,6 @@ object Sentiment {
       .option("header", "true")
       .load(MovieRevPath))
 
-
     val logReviews = (spark.read
       .format("csv")
       .option("header", "true")
@@ -139,9 +137,113 @@ object Sentiment {
 
     // Transform
 
+    // Simply create view
+    userPurchase.createOrReplaceTempView("user_purchase")
+
+    // Classify comments by sentiment
     val movieReviewTransformed =
       Logics.movieReviewLogicHasGood(movieReview, spark)
+    movieReviewTransformed.createOrReplaceTempView("movie_review")
+
+    // Parse XML content content into columns
     val logReviewsTransformed = Logics.logReviewsLogic(logReviews, spark)
+    logReviewsTransformed.createOrReplaceTempView("log_reviews")
+
+    // Create fact table
+    val factMovieAnalytics = spark.sql("""
+      SELECT
+        row_number() over (order by lr.log_date) as id_fact_movie_analytics,
+        lr.log_date as id_dim_date,
+        case lr.location
+          WHEN 'Alabama' THEN 'AL'
+          WHEN 'Alaska' THEN 'AK'
+          WHEN 'Arizona' THEN 'AZ'
+          WHEN 'Arkansas' THEN 'AR'
+          WHEN 'California' THEN 'CA'
+          WHEN 'Colorado' THEN 'CO'
+          WHEN 'Connecticut' THEN 'CT'
+          WHEN 'Delaware' THEN 'DE'
+          WHEN 'Florida' THEN 'FL'
+          WHEN 'Georgia' THEN 'GA'
+          WHEN 'Hawaii' THEN 'HI'
+          WHEN 'Idaho' THEN 'ID'
+          WHEN 'Illinois' THEN 'IL'
+          WHEN 'Indiana' THEN 'IN'
+          WHEN 'Iowa' THEN 'IA'
+          WHEN 'Kansas' THEN 'KS'
+          WHEN 'Kentucky' THEN 'KY'
+          WHEN 'Lousiana' THEN 'LA'
+          WHEN 'Maine' THEN 'ME'
+          WHEN 'Maryland' THEN 'MD'
+          WHEN 'Massachussets' THEN 'MA'
+          WHEN 'Michigan' THEN 'MI'
+          WHEN 'Minnesota' THEN 'MN'
+          WHEN 'Mississippi' THEN 'MS'
+          WHEN 'Missouri' THEN 'MO'
+          WHEN 'Montana' THEN 'MT'
+          WHEN 'Nebraska' THEN 'NE'
+          WHEN 'Nevada' THEN 'NV'
+          WHEN 'New Hampshire' THEN 'NH'
+          WHEN 'New Jersey' THEN 'NJ'
+          WHEN 'New Mexico' THEN 'NM'
+          WHEN 'New York' THEN 'NY'
+          WHEN 'North Carolina' THEN 'NC'
+          WHEN 'North Dakota' THEN 'ND'
+          WHEN 'Ohio' THEN 'OH'
+          WHEN 'Oklahoma' THEN 'OK'
+          WHEN 'Oregon' THEN 'OR'
+          WHEN 'Pensylvania' THEN 'PA'
+          WHEN 'Rhode Island' THEN 'RI'
+          WHEN 'South Carolina' THEN 'SC'
+          WHEN 'South Dakota' THEN 'SD'
+          WHEN 'Tennessee' THEN 'TN'
+          WHEN 'Texas' THEN 'TX'
+          WHEN 'Utah' THEN 'UT'
+          WHEN 'Vermont' THEN 'VT'
+          WHEN 'Virginia' THEN 'VA'
+          WHEN 'Washington' THEN 'WA'
+          WHEN 'West Virginia' THEN 'WV'
+          WHEN 'Wisconsin' THEN 'WI'
+          WHEN 'Wyoming' THEN 'WY'
+        end as id_dim_location,
+        concat( 
+          case lr.device 
+            when 'Mobile' then 'M'
+            when 'Computer' then 'C'
+            when 'Tablet' then 'T'
+          end,
+          '_',
+          case lr.os
+            when 'Apple iOS' then 'I'
+            when 'Linux' then 'L'
+            when 'Apple MacOS' then 'M'
+            when 'Google Android' then 'A'
+            when 'Microsoft Windows' then 'W'
+          end,
+          '_',
+          case lr.browser
+            when 'chrome' then 'C'
+            when 'edge' then 'E'
+            when 'firefox' then 'F'
+            when 'safari' then 'S'
+          end
+        ) as id_dim_device,
+        SUM(up.quantity * up.unit_price) as amount_spent,
+        SUM(mr.positive_review) as review_score, 
+        COUNT(mr.review_id) as review_count
+      FROM
+        user_purchase up
+      INNER JOIN 
+        movie_review mr ON up.customer_id = mr.customer_id
+      INNER JOIN 
+        log_reviews lr ON mr.review_id = lr.log_id
+      GROUP BY
+        lr.log_date,
+        lr.location,
+        lr.device,
+        lr.os,
+        lr.browser
+    """)
 
     // Load
 
@@ -156,6 +258,12 @@ object Sentiment {
     logReviewsTransformed.write
       .mode("overwrite")
       .parquet(s"$StagingPath/log_reviews_parq")
+
+    factMovieAnalytics
+      .write
+      .partitionBy("id_dim_location")
+      .mode("overwrite")
+      .parquet(s"$StagingPath/fact_movie_analytics_parq")
 
     Job.commit()
     spark.stop()

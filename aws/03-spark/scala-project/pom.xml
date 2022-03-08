@@ -80,16 +80,16 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>Sentiment</mainClass>
+                    <mainClass>ETL</mainClass>
                     <arguments>
                         <argument>--JOB-NAME=${project.artifactId}</argument>
-                        <argument>--endpoint=localhost:5432</argument>
-                        <argument>--database=postgres</argument>
-                        <argument>--table=dataeng.dbtest</argument>
-                        <argument>--user=postgres</argument>
-                        <argument>--password=santaCachuca@</argument>
-                        <argument>--movie_rev_path=./movie_review_100.csv</argument>
-                        <argument>--log_rev_path=./log_reviews.csv</argument>
+                        <argument>--db_endpoint=localhost:5432</argument>
+                        <argument>--db_name=postgres</argument>
+                        <argument>--db_table=dataeng.user_purchase</argument>
+                        <argument>--db_user=postgres</argument>
+                        <argument>--db_password=santaCachuca@</argument>
+                        <argument>--movie_rev_path=../../01-terraform/resources/csv/movie_review.csv</argument>
+                        <argument>--log_rev_path=../../01-terraform/resources/csv/log_reviews.csv</argument>
                         <argument>--staging_path=.</argument>
                     </arguments>
                     <systemProperties>

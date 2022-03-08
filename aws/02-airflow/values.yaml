@@ -48,3 +48,9 @@ secret:
   - envName: "AIRFLOW_VAR_REGION"
     secretName: af-variables
     secretKey: region
+  - envName: "AIRFLOW_VAR_ATHDB"
+    secretName: af-variables
+    secretKey: athdb
+  - envName: "AIRFLOW_VAR_ATHBUCKET"
+    secretName: af-variables
+    secretKey: athbucket

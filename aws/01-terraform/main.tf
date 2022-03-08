@@ -86,3 +86,6 @@ module "glue" {
   gj_class = var.gj_class
 }
 
+module "athena" {
+  source = "./modules/athena"
+}
