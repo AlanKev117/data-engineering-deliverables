@@ -16,7 +16,8 @@ export NFS_SERVER=$(terraform output -raw efs)
 # using Terraform output data (make sure AWS access key CSV file is in TERRAFORM_DIR)
 CREDENTIALS_FILE=$(find ./*accessKeys.csv)
 CREDENTIALS=$(head -2 $CREDENTIALS_FILE | tail -1)
-AFCONN_AWS="aws://${CREDENTIALS/,/:}@"
+AWS_REGION=$(terraform output -raw region)
+AFCONN_AWS="aws://${CREDENTIALS/,/:}@?region_name=${AWS_REGION}"
 
 DB_USER=$(terraform output -raw rds_username)
 DB_PASSWORD=$(terraform output -raw rds_password)
@@ -32,6 +33,7 @@ AFVAR_USRPUR_TABLE="user_purchase"
 AFVAR_USRPUR_SCHEMA="raw_data"
 AFVAR_USRPUR_QUERY="create_schema_and_table.sql"  # must match file name in Docker image.
 AFVAR_GLUEJOB=$(terraform output -raw gj_name)
+AFVAR_GLUE_SCRIPT=$(terraform output -raw gj_script_location)
 AFVAR_REGION=$(terraform output -raw region)
 
 AFVAR_ATHDB=$(terraform output -raw ath-db-name)
@@ -66,6 +68,7 @@ kubectl create secret generic af-variables \
     --from-literal=usrpur_schema=${AFVAR_USRPUR_SCHEMA} \
     --from-literal=usrpur_query=${AFVAR_USRPUR_QUERY} \
     --from-literal=gluejob=${AFVAR_GLUEJOB} \
+    --from-literal=glue_script_location=${AFVAR_GLUE_SCRIPT} \
     --from-literal=region=${AFVAR_REGION} \
     --from-literal=athdb=${AFVAR_ATHDB} \
     --from-literal=athbucket=${AFVAR_ATHBUCKET} \

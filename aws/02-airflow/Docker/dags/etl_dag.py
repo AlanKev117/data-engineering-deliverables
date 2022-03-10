@@ -6,6 +6,7 @@ from airflow.providers.amazon.aws.operators.glue import AwsGlueJobOperator
 
 
 GLUE_JOB_NAME = Variable.get("gluejob")
+GLUE_SCRIPT_LOCATION = Variable.get("glue_script_location")
 USRPUR_SCHEMA = Variable.get("usrpur_schema")
 USRPUR_TABLE = Variable.get("usrpur_table")
 MOVREV_KEY = Variable.get("movrev_key")
@@ -29,7 +30,7 @@ script_args = {
     "--db_password": pg_conn.password,
     "--movie_rev_path": f"s3://{BUCKET}/{MOVREV_KEY}",
     "--log_rev_path": f"s3://{BUCKET}/{LOGREV_KEY}",
-    "--staging_path": f"s3://{BUCKET}/staging"
+    "--staging_path": f"s3://{BUCKET}/silver"
 }
 
 with DAG('etl_dag',
@@ -37,6 +38,7 @@ with DAG('etl_dag',
          schedule_interval='@daily') as dag:
     etl = AwsGlueJobOperator(task_id="glue_job_task",
                              job_name=GLUE_JOB_NAME,
+                             script_location=GLUE_SCRIPT_LOCATION,
                              script_args=script_args,
                              region_name=REGION)
 

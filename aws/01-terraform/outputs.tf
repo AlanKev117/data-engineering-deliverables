@@ -50,6 +50,10 @@ output "gj_name" {
   value = module.glue.gj_name
 }
 
+output "gj_script_location" {
+  value = module.glue.gj_script_location
+}
+
 output "ath-db-name" {
   value = module.athena.ath-db-name
 }

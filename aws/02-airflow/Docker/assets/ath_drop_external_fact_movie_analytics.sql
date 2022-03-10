@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS {{ params.athena_db }}.fact_movie_analytics;

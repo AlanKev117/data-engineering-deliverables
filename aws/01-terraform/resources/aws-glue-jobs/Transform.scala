@@ -249,21 +249,21 @@ object ETL {
 
     userPurchase.write
       .mode("overwrite")
-      .parquet(s"$StagingPath/user_purchase_parq")
+      .parquet(s"$StagingPath/user_purchase")
 
     movieReviewTransformed.write
       .mode("overwrite")
-      .parquet(s"$StagingPath/movie_review_parq")
+      .parquet(s"$StagingPath/movie_review")
 
     logReviewsTransformed.write
       .mode("overwrite")
-      .parquet(s"$StagingPath/log_reviews_parq")
+      .parquet(s"$StagingPath/log_reviews")
 
     factMovieAnalytics
       .write
       .partitionBy("id_dim_location")
       .mode("overwrite")
-      .parquet(s"$StagingPath/fact_movie_analytics_parq")
+      .parquet(s"$StagingPath/fact_movie_analytics")
 
     Job.commit()
     spark.stop()
